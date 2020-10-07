@@ -105,55 +105,36 @@ $queryTradePrice ="SELECT AVG(`Стоимость опт, руб`) FROM `priceli
 $avgRetailPrice = mysqli_query($connection, $queryRetailPrice) or die("Ошибка " . mysqli_error($connection)); 
 $avgTradePrice = mysqli_query($connection, $queryTradePrice) or die("Ошибка " . mysqli_error($connection)); 
 
+
+
 //==============================================================================================
-// поиск самого дорогого товара (по рознице)
+//заполнение и чистка массива с ценой
 
-$queryMaxRetailPrice = "SELECT `Стоимость, руб` FROM `pricelisttable`";
+function cleaningArr($connection, $select, $rows)
+{
+  $price = mysqli_query($connection, $select);
+  for($i = 0 ; $i < $rows ; ++$i)                                                 //создаем одномерный массив со стоимосью
+  {
+       $arrPrice[] = mysqli_fetch_row($price)[0];
+       
+  }
+  $numericArrPrice = preg_replace("/[^,.0-9]/", '', $arrPrice);  // убираем из массива не числовые значения
 
+  $clearArrPrice = array_diff($numericArrPrice, array(''));  // убрал из массива пустые значения
 
-$maxRetailPrice = mysqli_query($connection, $queryMaxRetailPrice);  
-for($i = 0 ; $i < $rows ; ++$i)                                               //создаем одномерный массив со стоимосью в розницу
-{                                   
-     $arrMaxRetailPrice[] = mysqli_fetch_row($maxRetailPrice)[0];
-     
+  return($clearArrPrice);
+
 }
-$arrMaxRetailPrice2 = preg_replace("/[^,.0-9]/", '', $arrMaxRetailPrice); // убираем из массива не числовые значения
 
-$clearArrMaxRetailPrice = array_diff($arrMaxRetailPrice2, array('')); // убрал из массива пустые значения
+//==============================================================================================
+//поиск нужных значений в массиве
 
+$clearArrMaxRetailPrice = cleaningArr($connection, "SELECT `Стоимость, руб` FROM `pricelisttable`", $rows);  // поиск самого дорогого товара (по рознице)
 $finalMaxRetailPrice = max($clearArrMaxRetailPrice);
 
-//==============================================================================================
-// поиск самого дешевого товара (по опту)
 
-
-// НЕ ЗАКОНЧЕНО!
-
-$queryMinTradePrice = "SELECT `Стоимость опт, руб` FROM `pricelisttable`";
-
-
-$minTradePrice = mysqli_query($connection, $queryMinTradePrice);  
-for($i = 0 ; $i < $rows ; ++$i)                                                 //создаем одномерный массив со стоимосью в розницу
-{
-     $arrMinTradePrice[] = mysqli_fetch_row($minTradePrice)[0];
-     
-}
-$arrMinTradePrice2 = preg_replace("/[^,.0-9]/", '', $arrMinTradePrice); // убираем из массива не числовые значения
-
-$clearArrMinTradePrice = array_diff($arrMinTradePrice2, array('')); // убрал из массива пустые значения
-
-
-$finalMinTradePrice = min($clearArrMinTradePrice); 
-
-
-
-
-
-// for($i = 0 ; $i < $rows ; ++$i){
-//   echo '<li>' . $arrMinTradePrice[i];      // тут я значения массива выводил, это проверка
-// }
-
-
+$clearArrMinTradePrice = cleaningArr($connection, "SELECT `Стоимость опт, руб` FROM `pricelisttable`", $rows);  // поиск самого дешевого товара (по опту)
+$finalMinTradePrice = min($clearArrMinTradePrice);
 
 
 
