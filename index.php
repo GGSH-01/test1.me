@@ -119,7 +119,9 @@ for($i = 0 ; $i < $rows ; ++$i)                                               //
 }
 $arrMaxRetailPrice2 = preg_replace("/[^,.0-9]/", '', $arrMaxRetailPrice); // убираем из массива не числовые значения
 
-$finalMaxRetailPrice = max($arrMaxRetailPrice2);
+$clearArrMaxRetailPrice = array_diff($arrMaxRetailPrice2, array('')); // убрал из массива пустые значения
+
+$finalMaxRetailPrice = max($clearArrMaxRetailPrice);
 
 //==============================================================================================
 // поиск самого дешевого товара (по опту)
@@ -138,7 +140,10 @@ for($i = 0 ; $i < $rows ; ++$i)                                                 
 }
 $arrMinTradePrice2 = preg_replace("/[^,.0-9]/", '', $arrMinTradePrice); // убираем из массива не числовые значения
 
-$finalMinTradePrice = max($arrMinTradePrice2); // ЭТО НЕ ПРАВИЛЬНО
+$clearArrMinTradePrice = array_diff($arrMinTradePrice2, array('')); // убрал из массива пустые значения
+
+
+$finalMinTradePrice = min($clearArrMinTradePrice); 
 
 
 
@@ -156,6 +161,7 @@ $finalMinTradePrice = max($arrMinTradePrice2); // ЭТО НЕ ПРАВИЛЬНО
 
 //====================================================================================
 // вывод всякого под таблицей
+
  
 mysqli_close($connection);
 
@@ -163,7 +169,6 @@ echo 'Общее количество товаров на Складе1 и на 
 echo '<br>Средняя стоимость розничной цены товара: ' .  mysqli_fetch_row($avgRetailPrice)[0];
 echo '<br>Средняя стоимость оптовой цены товара: ' . mysqli_fetch_row($avgTradePrice)[0];
 echo '<br>максималка: ' . $finalMaxRetailPrice;
-echo '<br>минималочка: ' . max($arrMinTradePrice2);
-
+echo '<br>минималочка: ' . $finalMinTradePrice;
 
 ?>
