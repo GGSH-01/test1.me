@@ -103,18 +103,19 @@ if($result)
         echo "<tr>";
             for ($j = 0 ; $j < 7 ; ++$j) 
             {
-              if($row[$j] === $finalMaxRetailPrice)
+              if($j===1 && $row[$j] === $finalMaxRetailPrice)
               {
                 echo "<td class='red'>$row[$j]</td>";
-              }elseif ($row[$j] == $finalMinTradePrice){
+              }elseif ($j===2 && $row[$j] == $finalMinTradePrice){
                 echo "<td class='green'>$row[$j]</td>";
               } else {
                 echo "<td >$row[$j]</td>";
               }
               
+              if($row[3]<20 || $row[4]<20){
+                $row[6]="Осталось мало!! Срочно докупите!!!";
+              }
               
-              
-
             }
         echo "</tr>";
     }
@@ -160,7 +161,5 @@ mysqli_close($connection);
 echo 'Общее количество товаров на Складе1 и на Складе2: ' . $allStore;
 echo '<br>Средняя стоимость розничной цены товара: ' .  mysqli_fetch_row($avgRetailPrice)[0];
 echo '<br>Средняя стоимость оптовой цены товара: ' . mysqli_fetch_row($avgTradePrice)[0];
-echo '<br>максималка: ' . $finalMaxRetailPrice;
-echo '<br>минималочка: ' . $finalMinTradePrice;
 
 ?>
