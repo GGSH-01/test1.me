@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+<link rel="stylesheet" href="style.css">
 
 
 
@@ -40,6 +40,39 @@ foreach ($PHPExcel_file->getWorksheetIterator() as $worksheet) // цикл об�
 }
 
 
+//==============================================================================================
+//заполнение и чистка массива с ценой
+
+function cleaningArr($connection, $select)
+{
+  
+  $price = mysqli_query($connection, $select);
+  $rows = mysqli_num_rows($price);
+  for($i = 0 ; $i < $rows ; ++$i)                                                 //создаем одномерный массив со стоимосью
+  {
+       $arrPrice[] = mysqli_fetch_row($price)[0];
+       
+  }
+  $numericArrPrice = preg_replace("/[^,.0-9]/", '', $arrPrice);  // убираем из массива не числовые значения
+
+  $clearArrPrice = array_diff($numericArrPrice, array(''));  // убрал из массива пустые значения
+
+  return($clearArrPrice);
+
+}
+
+
+//==============================================================================================
+//поиск нужных значений в массиве
+
+$clearArrMaxRetailPrice = cleaningArr($connection, "SELECT `Стоимость, руб` FROM `pricelisttable`");  // поиск самого дорогого товара (по рознице)
+$finalMaxRetailPrice = max($clearArrMaxRetailPrice);
+
+
+$clearArrMinTradePrice = cleaningArr($connection, "SELECT `Стоимость опт, руб` FROM `pricelisttable`");  // поиск самого дешевого товара (по опту)
+$finalMinTradePrice = min($clearArrMinTradePrice);
+
+
 
 //==============================================================================================
 // вывод данных из базы на страницу
@@ -48,7 +81,6 @@ foreach ($PHPExcel_file->getWorksheetIterator() as $worksheet) // цикл об�
 $query2 = "SELECT * FROM `pricelisttable`"; // запрос для вывода всех данных таблицы на страницу
 
 $result = mysqli_query($connection, $query2) or die("Ошибка " . mysqli_error($connection)); 
-
 
 
 
@@ -71,10 +103,17 @@ if($result)
         echo "<tr>";
             for ($j = 0 ; $j < 7 ; ++$j) 
             {
-              // if($j = 3; && $row[$j] === )
+              if($row[$j] === $finalMaxRetailPrice)
+              {
+                echo "<td class='red'>$row[$j]</td>";
+              }elseif ($row[$j] == $finalMinTradePrice){
+                echo "<td class='green'>$row[$j]</td>";
+              } else {
+                echo "<td >$row[$j]</td>";
+              }
               
               
-              echo "<td>$row[$j]</td>";
+              
 
             }
         echo "</tr>";
@@ -107,34 +146,6 @@ $avgTradePrice = mysqli_query($connection, $queryTradePrice) or die("Ошибк�
 
 
 
-//==============================================================================================
-//заполнение и чистка массива с ценой
-
-function cleaningArr($connection, $select, $rows)
-{
-  $price = mysqli_query($connection, $select);
-  for($i = 0 ; $i < $rows ; ++$i)                                                 //создаем одномерный массив со стоимосью
-  {
-       $arrPrice[] = mysqli_fetch_row($price)[0];
-       
-  }
-  $numericArrPrice = preg_replace("/[^,.0-9]/", '', $arrPrice);  // убираем из массива не числовые значения
-
-  $clearArrPrice = array_diff($numericArrPrice, array(''));  // убрал из массива пустые значения
-
-  return($clearArrPrice);
-
-}
-
-//==============================================================================================
-//поиск нужных значений в массиве
-
-$clearArrMaxRetailPrice = cleaningArr($connection, "SELECT `Стоимость, руб` FROM `pricelisttable`", $rows);  // поиск самого дорогого товара (по рознице)
-$finalMaxRetailPrice = max($clearArrMaxRetailPrice);
-
-
-$clearArrMinTradePrice = cleaningArr($connection, "SELECT `Стоимость опт, руб` FROM `pricelisttable`", $rows);  // поиск самого дешевого товара (по опту)
-$finalMinTradePrice = min($clearArrMinTradePrice);
 
 
 
