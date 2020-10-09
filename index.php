@@ -53,9 +53,9 @@ function cleaningArr($connection, $select)
        $arrPrice[] = mysqli_fetch_row($price)[0];
        
   }
-  $numericArrPrice = preg_replace("/[^,.0-9]/", '', $arrPrice);  // убираем из массива не числовые значения
+  $numericArrPrice = preg_replace("/[^,.0-9]/", '', $arrPrice);                   // убираем из массива не числовые значения
 
-  $clearArrPrice = array_diff($numericArrPrice, array(''));  // убрал из массива пустые значения
+  $clearArrPrice = array_diff($numericArrPrice, array(''));                       // убрал из массива пустые значения
 
   return($clearArrPrice);
 
@@ -103,17 +103,17 @@ if($result)
         echo "<tr>";
             for ($j = 0 ; $j < 7 ; ++$j) 
             {
-              if($j===1 && $row[$j] === $finalMaxRetailPrice)
+              if($j===1 && $row[$j] === $finalMaxRetailPrice)                 //подсвечиваю красным ячейку с максимальной розничной ценой
               {
                 echo "<td class='red'>$row[$j]</td>";
-              }elseif ($j===2 && $row[$j] == $finalMinTradePrice){
+              }elseif ($j===2 && $row[$j] == $finalMinTradePrice){            //подсвечиваю зеленым ячейку с минимальной оптовой ценой
                 echo "<td class='green'>$row[$j]</td>";
               } else {
                 echo "<td >$row[$j]</td>";
               }
               
-              if($row[3]<20 || $row[4]<20){
-                $row[6]="Осталось мало!! Срочно докупите!!!";
+              if($row[3]<20 || $row[4]<20){                                   //ищу склад, в котором товара осталось меньше 20
+                $row[6]="Осталось мало!! Срочно докупите!!!";         
               }
               
             }
@@ -158,8 +158,131 @@ $avgTradePrice = mysqli_query($connection, $queryTradePrice) or die("Ошибк�
  
 mysqli_close($connection);
 
+
 echo 'Общее количество товаров на Складе1 и на Складе2: ' . $allStore;
 echo '<br>Средняя стоимость розничной цены товара: ' .  mysqli_fetch_row($avgRetailPrice)[0];
 echo '<br>Средняя стоимость оптовой цены товара: ' . mysqli_fetch_row($avgTradePrice)[0];
 
 ?>
+
+
+<!-- второе задание-->
+
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+</head>
+<body>
+
+
+<div style="background-color: #212529;">ass</div>   <!-- разобраться со стилем -->
+
+
+<div style="display: flex;">          <!-- разобраться со стилем -->
+
+  <!-- Unnamed (Rectangle) -->
+  <div id="u0">
+      <p><span>Показать товары, у которых</span></p>
+  </div>
+
+  <!-- Unnamed (Droplist) -->
+  <div id="u1">
+    <select name = "typePrice" class = "typePrice">
+      <option value="Розничная цена">Розничная цена</option>
+      <option value="Оптовая цена">Оптовая цена</option>
+    </select>
+  </div>
+
+  <!-- Unnamed (Rectangle) -->
+  <div id="u2">
+    <p><span>от</span></p>
+    
+  </div>
+
+  <!-- Unnamed (Text Field) -->
+  <div id="u3">
+    <input name = "lowPrice" class = "lowPrice" type="text" value="1000">
+  </div>
+
+  <!-- Unnamed (Rectangle) -->
+  <div id="u4">
+    <p><span>до</span></p>
+  </div>
+
+  <!-- Unnamed (Text Field) -->
+  <div id="u5">
+    <input name = "highPrice" class = "highPrice" type="text" value="3000">
+  </div>
+
+  <!-- Unnamed (Rectangle) -->
+  <div id="u6">
+    <p><span>рублей и на складе </span></p>
+  </div>
+
+  <!-- Unnamed (Droplist) -->
+  <div id="u7">
+    <select name = "route" class = "route">
+      <option value="Более">Более</option>
+      <option value="Менее">Менее</option>
+    </select>
+  </div>
+
+    <!-- Unnamed (Text Field) -->
+    <div id="u8" >
+    <input name = "zero" class = "zero" type="text" value="20">
+  </div>
+
+  <!-- Unnamed (Rectangle) -->
+  <div id="u9">
+    <p><span>штук.</span></p>
+  </div>
+
+
+
+  <!-- Unnamed (Rectangle) -->
+  <div id="u10" > 
+    <p><button class = "startButton">ПОКАЗАТЬ ТОВАРЫ</button></p>
+  </div>
+
+
+
+</div>
+  
+
+
+
+  <script>
+
+    $(document).ready(function(){
+      $('button.startButton').on('click', function(){
+        var typePriceValue = $('select.typePrice').val();
+        var lowPriceValue = $('input.lowPrice').val();
+        var highPriceValue = $('input.highPrice').val();
+        var routeValue = $('select.route').val();
+        var zeroValue = $('input.zero').val();
+
+        $.ajax({
+          method: "POST",
+          url: "filter.php",
+          data: { typePrice: typePriceValue, lowPrice: lowPriceValue, highPrice: highPriceValue, route: routeValue, zero: zeroValue }
+        })
+          .done(function( msg ) {
+            alert( "Data Saved: " + msg );
+          });
+
+      })
+    });
+
+
+ 
+
+  </script>
+
+</body>
+</html>
