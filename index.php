@@ -194,8 +194,8 @@ echo '<br>Средняя стоимость оптовой цены товара
   <!-- Unnamed (Droplist) -->
   <div id="u1">
     <select name = "typePrice" class = "typePrice">
-      <option value="Розничная цена">Розничная цена</option>
-      <option value="Оптовая цена">Оптовая цена</option>
+      <option value="`Стоимость, руб`">Розничная цена</option>
+      <option value="`Стоимость опт, руб`">Оптовая цена</option>
     </select>
   </div>
 
@@ -228,8 +228,8 @@ echo '<br>Средняя стоимость оптовой цены товара
   <!-- Unnamed (Droplist) -->
   <div id="u7">
     <select name = "route" class = "route">
-      <option value="Более">Более</option>
-      <option value="Менее">Менее</option>
+      <option value=">">Более</option>
+      <option value="<">Менее</option>
     </select>
   </div>
 
@@ -250,11 +250,11 @@ echo '<br>Средняя стоимость оптовой цены товара
     <p><button class = "startButton">ПОКАЗАТЬ ТОВАРЫ</button></p>
   </div>
 
-
+  
 
 </div>
   
-
+<div id="result_table"></div>
 
 
   <script>
@@ -272,8 +272,9 @@ echo '<br>Средняя стоимость оптовой цены товара
           url: "filter.php",
           data: { typePrice: typePriceValue, lowPrice: lowPriceValue, highPrice: highPriceValue, route: routeValue, zero: zeroValue }
         })
-          .done(function( msg ) {
-            alert( "Data Saved: " + msg );
+          .done(function( tableFilter ) {
+            // print_r( tableFilter );
+            $('#result_table').html( tableFilter );
           });
 
       })
